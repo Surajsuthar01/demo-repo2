@@ -1,23 +1,11 @@
----
-- name: Deploy httpd Docker container
-  hosts: docker_host
-  become: yes
-  tasks:
-    - name: Pull the latest httpd Docker image
-      docker_image:
-        name: my-httpd-image
-        source: pull
-        tag: latest
+# Use the official httpd image as the base image
+FROM httpd:2.4
 
-    - name: Stop and remove existing container
-      docker_container:
-        name: my-httpd-container
-        state: absent
+# Copy the index.html file to the Apache document root
+COPY index.html /usr/local/apache2/htdocs/
 
-    - name: Run the httpd Docker container
-      docker_container:
-        name: my-httpd-container
-        image: my-httpd-image:latest
-        ports:
-          - "80:80"
-        state: started
+# Expose port 80
+EXPOSE 80
+
+# Start the Apache server
+CMD ["httpd-foreground"]
