@@ -16,6 +16,16 @@ pipeline {
             }
         }
 
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image("my-httpd-image").push("latest")
+                    }
+                }
+            }
+        }
+
         stage('Deploy with Ansible') {
             steps {
                 ansiblePlaybook(
