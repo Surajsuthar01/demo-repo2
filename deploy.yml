@@ -3,13 +3,21 @@
   hosts: docker_host
   become: yes
   tasks:
-    - name: Pull the latest httpd Docker image
+    - name: Copy Dockerfile and index.html to target machine
+      copy:
+        src: "{{ item }}"
+        dest: "/tmp/{{ item }}"
+      with_items:
+        - Dockerfile
+        - index.html
+
+    - name: Build the Docker image
       docker_image:
         name: my-httpd-image
         source: build
         build:
-          path: .
-          dockerfile: Dockerfile
+          path: /tmp
+          dockerfile: /tmp/Dockerfile
         tag: latest
 
     - name: Stop and remove existing container
